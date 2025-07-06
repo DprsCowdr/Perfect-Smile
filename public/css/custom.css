@@ -1,0 +1,35 @@
+.bg-gradient-primary {
+    background: #F5ECFE !important;
+}
+
+.sidebar {
+    background: #fff !important;
+    color: #222 !important;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.04);
+}
+.sidebar .nav-item .nav-link,
+.sidebar .sidebar-brand,
+.sidebar .sidebar-heading {
+    color: #222 !important;
+}
+.sidebar .nav-item.active .nav-link {
+    background: #f5ecfe !important;
+    color: #7c3aed !important;
+    box-shadow: 0 2px 8px 0 rgba(124,58,237,0.08);
+}
+.sidebar .nav-item .nav-link:hover {
+    background: #f5ecfe !important;
+    color: #7c3aed !important;
+}
+.sidebar .nav-item .nav-link i {
+    color: #7c3aed !important;
+}
+.sidebar .sidebar-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px #e0d6f7;
+}
+.sidebar .sidebar-divider {
+    border-color: #eee;
+} 
