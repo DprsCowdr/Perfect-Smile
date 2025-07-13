@@ -1,68 +1,175 @@
-# CodeIgniter 4 Application Starter
+# Perfect Smile - Dental Clinic Management System
 
-## What is CodeIgniter?
+A comprehensive dental clinic management system built with CodeIgniter 4, featuring multi-role user management, patient management, appointment scheduling, and modern UI.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Features
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+- 🏥 **Multi-Role Management**: Admin, Doctor, Staff, and Patient roles
+- 👥 **Patient Management**: Add, view, edit, and manage patient records
+- 📅 **Appointment Scheduling**: Book and manage appointments
+- 🎨 **Modern UI**: Beautiful, responsive design with slide-in panels
+- 🔐 **Secure Authentication**: Role-based access control
+- 📱 **Mobile Responsive**: Works perfectly on all devices
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## Prerequisites
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- PHP 8.0 or higher
+- MySQL 5.7 or higher
+- Composer
+- Web server (Apache/Nginx) or PHP built-in server
 
-## Installation & updates
+## Installation
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+### 1. Clone the Repository
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+```bash
+git clone https://github.com/yourusername/perfect-smile.git
+cd perfect-smile
+```
 
-## Setup
+### 2. Install Dependencies
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+```bash
+composer install
+```
 
-## Important Change with index.php
+### 3. Environment Setup
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+Copy the environment file:
+```bash
+cp env .env
+```
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+Edit `.env` file and configure your database:
+```env
+database.default.hostname = localhost
+database.default.database = perfect_smile
+database.default.username = your_username
+database.default.password = your_password
+database.default.DBDriver = MySQLi
+```
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### 4. Database Setup
 
-## Repository Management
+Create a new MySQL database:
+```sql
+CREATE DATABASE perfect_smile;
+```
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+Run the migrations:
+```bash
+php spark migrate
+```
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+Seed the database with initial data:
+```bash
+php spark db:seed UserSeeder
+```
 
-## Server Requirements
+### 5. Fix User Passwords (Important!)
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+Run the password fix command to properly hash user passwords:
+```bash
+php spark auth:fix-passwords
+```
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+### 6. Start the Development Server
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+```bash
+php spark serve
+```
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+The application will be available at `http://localhost:8080`
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+## Default Login Credentials
+
+After running the seeder and password fix, you can login with:
+
+### Admin
+- **Email**: admin@perfectsmile.com
+- **Password**: admin123
+
+### Doctor
+- **Email**: doctor@perfectsmile.com
+- **Password**: doctor123
+
+### Staff
+- **Email**: staff@perfectsmile.com
+- **Password**: staff123
+
+### Patient
+- **Email**: patient@perfectsmile.com
+- **Password**: patient123
+
+## Project Structure
+
+```
+perfect-smile/
+├── app/
+│   ├── Controllers/     # Application controllers
+│   ├── Models/         # Database models
+│   ├── Views/          # View templates
+│   └── Database/       # Migrations and seeders
+├── public/             # Public assets (CSS, JS, images)
+├── vendor/             # Composer dependencies
+└── writable/           # Logs and cache
+```
+
+## Key Features
+
+### Patient Management
+- Add new patients with comprehensive information
+- View patient details in modern slide-in panels
+- Edit patient information
+- Toggle patient status (active/inactive)
+
+### Modern UI Components
+- Slide-in panels for forms and details
+- Modern date picker with Flatpickr
+- Responsive design for all screen sizes
+- Beautiful purple theme
+
+### Role-Based Access
+- **Admin**: Full access to all features
+- **Staff**: Patient management and basic features
+- **Doctor**: Medical-specific features (to be implemented)
+- **Patient**: Personal dashboard and appointments
+
+## Troubleshooting
+
+### Icons Not Showing
+If Font Awesome icons are not displaying:
+1. Check your internet connection (CDN is used)
+2. Clear browser cache
+3. Ensure no ad blockers are blocking CDN resources
+
+### Database Connection Issues
+1. Verify database credentials in `.env`
+2. Ensure MySQL service is running
+3. Check database permissions
+
+### Permission Issues
+If you encounter permission errors:
+```bash
+chmod -R 755 writable/
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For support and questions, please open an issue on GitHub.
+
+---
+
+**Perfect Smile** - Making dental clinic management simple and efficient! 🦷✨
