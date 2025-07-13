@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
                 'user_type' => 'admin',
                 'phone' => '1234567890',
                 'address' => '123 Admin Street',
-                'dob' => '1990-01-01',
+                'date_of_birth' => '1990-01-01',
                 'gender' => 'male'
             ],
             [
@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
                 'user_type' => 'doctor',
                 'phone' => '1234567891',
                 'address' => '456 Doctor Avenue',
-                'dob' => '1985-05-15',
+                'date_of_birth' => '1985-05-15',
                 'gender' => 'male'
             ],
             [
@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
                 'user_type' => 'patient',
                 'phone' => '1234567892',
                 'address' => '789 Patient Road',
-                'dob' => '1995-10-20',
+                'date_of_birth' => '1995-10-20',
                 'gender' => 'female'
             ],
             [
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
                 'user_type' => 'staff',
                 'phone' => '1234567893',
                 'address' => '321 Staff Lane',
-                'dob' => '1992-03-12',
+                'date_of_birth' => '1992-03-12',
                 'gender' => 'female'
             ]
         ];

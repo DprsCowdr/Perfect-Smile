@@ -31,17 +31,17 @@ $userType = $user['user_type'] ?? null;
     <hr class="sidebar-divider">
     <?php if ($userType === 'admin'): ?>
         <div class="sidebar-heading">Management</div>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/patients') ?>"><i class="fas fa-users"></i><span>Patients Management</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/appointments') ?>"><i class="fas fa-calendar-alt"></i><span>Appointments Management</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/services') ?>"><i class="fas fa-stethoscope"></i><span>Services Management</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/waitlist') ?>"><i class="fas fa-clipboard-list"></i><span>Waitlist Management</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/procedures') ?>"><i class="fas fa-file-medical"></i><span>Procedures Management</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/records') ?>"><i class="fas fa-folder-open"></i><span>Records Management</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/invoice') ?>"><i class="fas fa-file-invoice-dollar"></i><span>Invoice Management</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/patients') ?>"><i class="fas fa-users"></i><span>Patients </span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/appointments') ?>"><i class="fas fa-calendar-alt"></i><span>Appointments </span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/services') ?>"><i class="fas fa-stethoscope"></i><span>Services </span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/waitlist') ?>"><i class="fas fa-clipboard-list"></i><span>Waitlist </span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/procedures') ?>"><i class="fas fa-file-medical"></i><span>Procedures </span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/records') ?>"><i class="fas fa-folder-open"></i><span>Records </span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/invoice') ?>"><i class="fas fa-file-invoice-dollar"></i><span>Invoice </span></a></li>
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Administration</div>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/role-permission') ?>"><i class="fas fa-user-shield"></i><span>Role Permission Management</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/branches') ?>"><i class="fas fa-code-branch"></i><span>Branches Management</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/role-permission') ?>"><i class="fas fa-user-shield"></i><span>Role Permission </span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/branches') ?>"><i class="fas fa-code-branch"></i><span>Branches </span></a></li>
         <hr class="sidebar-divider">
         <li class="nav-item"><a class="nav-link" href="<?= base_url('admin/settings') ?>"><i class="fas fa-cog"></i><span>Settings</span></a></li>
     <?php elseif ($userType === 'doctor'): ?>
@@ -53,7 +53,7 @@ $userType = $user['user_type'] ?? null;
     <?php elseif ($userType === 'staff'): ?>
         <div class="sidebar-heading">Management</div>
         <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-users"></i><span>Patients</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= base_url('staff/patients') ?>"><i class="fas fa-users"></i><span>Patients</span></a></li>
         <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-file-invoice-dollar"></i><span>Invoices</span></a></li>
     <?php elseif ($userType === 'patient'): ?>
         <div class="sidebar-heading">My Account</div>

@@ -99,7 +99,7 @@
                                         <div class="col-md-6">
                                             <p><strong>Phone:</strong> <?= $user['phone'] ?? 'N/A' ?></p>
                                             <p><strong>Gender:</strong> <?= ucfirst($user['gender'] ?? 'N/A') ?></p>
-                                            <p><strong>Date of Birth:</strong> <?= $user['dob'] ?? 'N/A' ?></p>
+                                            <p><strong>Date of Birth:</strong> <?= $user['date_of_birth'] ?? 'N/A' ?></p>
                                         </div>
                                     </div>
                                     <p><strong>Address:</strong> <?= $user['address'] ?? 'N/A' ?></p>

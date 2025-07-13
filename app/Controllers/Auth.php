@@ -102,7 +102,7 @@ class Auth extends BaseController
             'user_type' => 'patient', // Default to patient for registration
             'phone' => $this->request->getPost('phone'),
             'address' => $this->request->getPost('address'),
-            'dob' => $this->request->getPost('dob'),
+            'date_of_birth' => $this->request->getPost('date_of_birth'),
             'gender' => $this->request->getPost('gender')
         ];
 

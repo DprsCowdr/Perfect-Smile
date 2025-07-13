@@ -13,5 +13,12 @@
     <!-- Custom styles for this template-->
     <link href="<?= base_url('css/sb-admin-2.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('css/custom.css') ?>" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #F5ECFE !important;
+        }
+    </style>
 </head>
-<body class="bg-gradient-primary"> 
+<body style="background: #F5ECFE;"> 

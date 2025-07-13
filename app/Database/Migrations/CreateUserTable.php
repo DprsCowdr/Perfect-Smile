@@ -35,10 +35,6 @@ class CreateUserTable extends Migration
                 'constraint' => 255,
                 'null' => true,
             ],
-            'dob' => [
-                'type' => 'DATE',
-                'null' => true,
-            ],
             'gender' => [
                 'type' => 'VARCHAR',
                 'constraint' => 20,

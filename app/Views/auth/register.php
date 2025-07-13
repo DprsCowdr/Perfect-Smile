@@ -174,8 +174,8 @@
             </div>
             
             <div class="form-group">
-                <label for="dob">Date of Birth</label>
-                <input type="date" id="dob" name="dob" value="<?= old('dob') ?>">
+                <label for="date_of_birth">Date of Birth</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" value="<?= old('date_of_birth') ?>">
             </div>
             
             <div class="form-group">
