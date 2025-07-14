@@ -247,7 +247,120 @@ class Admin extends BaseController
         if ($user['user_type'] !== 'admin') {
             return redirect()->to('/dashboard');
         }
-        return view('admin/appointments', ['user' => $user]);
+        
+        // Use your AppointmentModel
+        $appointmentModel = new \App\Models\AppointmentModel();
+        $appointments = $appointmentModel->getAppointmentsWithDetails(); // This gets appointments with patient names
+        
+        // Get patients and branches for the form
+        $userModel = new \App\Models\UserModel();
+        $branchModel = new \App\Models\BranchModel();
+        
+        $patients = $userModel->where('user_type', 'patient')->findAll();
+        $branches = $branchModel->findAll();
+        
+        return view('admin/appointments', [
+            'user' => $user,
+            'appointments' => $appointments,
+            'patients' => $patients,
+            'branches' => $branches
+        ]);
+    }
+
+    public function createAppointment()
+    {
+        $user = Auth::getCurrentUser();
+        if ($user['user_type'] !== 'admin') {
+            return redirect()->to('/dashboard');
+        }
+
+        $appointmentModel = new \App\Models\AppointmentModel();
+        
+        $data = [
+            'branch_id' => $this->request->getPost('branch'),
+            'user_id' => $this->request->getPost('patient'),
+            'appointment_date' => $this->request->getPost('date'),
+            'appointment_time' => $this->request->getPost('time'),
+            'status' => 'scheduled',
+            'remarks' => $this->request->getPost('remarks')
+        ];
+
+        // Validate required fields
+        if (empty($data['user_id']) || empty($data['appointment_date']) || empty($data['appointment_time'])) {
+            session()->setFlashdata('error', 'Required fields missing');
+            return redirect()->back();
+        }
+
+        try {
+            $appointmentModel->insert($data);
+            session()->setFlashdata('success', 'Appointment created successfully');
+            return redirect()->to('/admin/appointments');
+            
+        } catch (\Exception $e) {
+            session()->setFlashdata('error', 'Failed to create appointment: ' . $e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    public function updateAppointment($id)
+    {
+        $appointmentModel = new \App\Models\AppointmentModel();
+        
+        if ($this->request->getMethod() === 'POST' || $this->request->getMethod() === 'PUT') {
+            $data = [
+                'patient_id' => $this->request->getPost('patient'),
+                'branch_id' => $this->request->getPost('branch'),
+                'appointment_date' => $this->request->getPost('date'),
+                'appointment_time' => $this->request->getPost('time'),
+                'remarks' => $this->request->getPost('remarks'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+            
+            // For AJAX requests
+            if ($this->request->isAJAX()) {
+                $jsonData = json_decode($this->request->getBody(), true);
+                if ($jsonData) {
+                    $data = array_merge($data, $jsonData);
+                }
+            }
+            
+            if ($appointmentModel->update($id, $data)) {
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON(['success' => true, 'message' => 'Appointment updated successfully']);
+                }
+                session()->setFlashdata('success', 'Appointment updated successfully');
+            } else {
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON(['success' => false, 'message' => 'Failed to update appointment']);
+                }
+                session()->setFlashdata('error', 'Failed to update appointment');
+            }
+        }
+        
+        return redirect()->to(base_url('admin/appointments'));
+    }
+
+    public function deleteAppointment($id)
+    {
+        $appointmentModel = new \App\Models\AppointmentModel();
+        
+        if ($appointmentModel->delete($id)) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['success' => true, 'message' => 'Appointment deleted successfully']);
+            }
+            session()->setFlashdata('success', 'Appointment deleted successfully');
+        } else {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['success' => false, 'message' => 'Failed to delete appointment']);
+            }
+            session()->setFlashdata('error', 'Failed to delete appointment');
+        }
+        
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
+        }
+        
+        return redirect()->to(base_url('admin/appointments'));
     }
 
     public function services()
@@ -321,4 +434,25 @@ class Admin extends BaseController
         }
         return view('admin/settings', ['user' => $user]);
     }
-} 
+
+    public function getPatientAppointments($patientId)
+    {
+        $user = Auth::getCurrentUser();
+        if ($user['user_type'] !== 'admin') {
+            return $this->response->setJSON(['error' => 'Unauthorized']);
+        }
+
+        $appointmentModel = new \App\Models\AppointmentModel();
+        
+        try {
+            $appointments = $appointmentModel->getPatientAppointments($patientId);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'appointments' => $appointments
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON(['error' => 'Failed to load appointments']);
+        }
+    }
+}

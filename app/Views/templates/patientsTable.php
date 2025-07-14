@@ -188,7 +188,7 @@
             <div style="color:#b0b0c0; font-size:0.92rem;" id="view-patient-email"></div>
             <div style="display:flex; gap:12px; margin-top:10px; align-items:center;">
                 <div style="color:#888; font-size:0.95rem;"><i class="far fa-clipboard"></i> Treatments: <b>0</b></div>
-                <div style="color:#888; font-size:0.95rem;"><i class="fas fa-coins"></i> Spent: <b>$0</b></div>
+                <div style="color:#888; font-size:0.95rem;"><i class="fas fa-calendar-alt"></i> Appointments: <b id="appointment-count">0</b></div>
             </div>
         </div>
     </div>
@@ -217,13 +217,13 @@
         <button class="view-patient-tab-btn" data-tab="bills" style="flex:1; background:none; border:none; font-weight:600; color:#7a7a8c; padding:8px 0; font-size:0.98rem;"> <i class="fas fa-file-invoice-dollar me-2"></i> Patient Bills</button>
     </div>
     <div id="view-patient-tab-content-treatments" class="view-patient-tab-content" style="background:#fff; border-radius:10px; min-height:90px; display:flex; align-items:center; justify-content:center; color:#b0b0c0; font-size:1.05rem;">
-        <span>.............................................</span>
+        <span>No treatments found</span>
     </div>
-    <div id="view-patient-tab-content-appointments" class="view-patient-tab-content" style="display:none; background:#fff; border-radius:10px; min-height:90px; align-items:center; justify-content:center; color:#b0b0c0; font-size:1.05rem;">
-        <span>Appointments placeholder</span>
+    <div id="view-patient-tab-content-appointments" class="view-patient-tab-content" style="display:none; background:#fff; border-radius:10px; min-height:90px; padding:16px; overflow-y:auto; max-height:300px;">
+        <div id="appointments-list"></div>
     </div>
     <div id="view-patient-tab-content-bills" class="view-patient-tab-content" style="display:none; background:#fff; border-radius:10px; min-height:90px; align-items:center; justify-content:center; color:#b0b0c0; font-size:1.05rem;">
-        <span>Patient Bills placeholder</span>
+        <span>No bills found</span>
     </div>
 </div>
 
@@ -256,7 +256,7 @@
             <div>
                 <label>Phone Number</label>
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span style="font-size:1.2rem;">🇺🇬</span>
+                    <span style="font-size:1.2rem;"></span>
                     <input type="text" id="update-patient-phone" name="phone" placeholder="Phone Number" style="flex:1;" required />
                 </div>
             </div>
@@ -316,6 +316,8 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing patient management...');
+    
     // Initialize modern date picker
     flatpickr(".modern-date-input", {
         dateFormat: "Y-m-d",
@@ -364,145 +366,226 @@ document.addEventListener('DOMContentLoaded', function() {
         var btn = e.target.closest('.showViewPatientPanelBtn');
         if (btn) {
             e.preventDefault();
+            console.log('View patient button clicked');
+            
             var viewPanel = document.getElementById('viewPatientPanel');
-            if (viewPanel) viewPanel.classList.add('active');
+            if (viewPanel) {
+                viewPanel.classList.add('active');
+                console.log('Patient panel opened');
+            }
+            
             // Get patient data
             var patient = btn.getAttribute('data-patient');
             if (patient) {
                 try {
                     var data = JSON.parse(patient);
+                    console.log('Patient data parsed:', data);
+                    
                     document.getElementById('view-patient-name').textContent = data.name || '';
                     document.getElementById('view-patient-email').textContent = data.email || '';
                     document.getElementById('view-patient-phone').textContent = data.phone || '';
                     document.getElementById('view-patient-gender').textContent = data.gender || '';
                     document.getElementById('view-patient-date-of-birth').textContent = data.date_of_birth || '';
                     document.getElementById('view-patient-address').textContent = data.address || '';
+                    
+                    // Load appointments for this patient
+                    console.log('Loading appointments for patient ID:', data.id);
+                    loadPatientAppointments(data.id);
+                    
                 } catch (err) {
                     console.error('Error parsing patient data:', err);
                 }
             }
         }
+        
         if (e.target.closest('#closeViewPatientPanel')) {
+            console.log('Closing patient panel');
             var viewPanel = document.getElementById('viewPatientPanel');
             if (viewPanel) viewPanel.classList.remove('active');
         }
     });
 
-    // Update Patient Panel (table edit icon)
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.showUpdatePatientPanelBtnTable')) {
-            e.preventDefault();
-            var updatePanel = document.getElementById('updatePatientPanel');
-            if (updatePanel) updatePanel.classList.add('active');
-            
-            // Get patient ID and load data
-            var patientId = e.target.closest('.showUpdatePatientPanelBtnTable').getAttribute('data-patient-id');
-            if (patientId) {
-                loadPatientData(patientId);
-            }
-        }
-        if (e.target.closest('#closeUpdatePatientPanel')) {
-            var updatePanel = document.getElementById('updatePatientPanel');
-            if (updatePanel) updatePanel.classList.remove('active');
-        }
-    });
-    
-    // Function to load patient data for update
-    function loadPatientData(patientId) {
-        console.log('Loading patient data for ID:', patientId);
+    // Function to load patient appointments
+    function loadPatientAppointments(patientId) {
+        console.log('Loading appointments for patient ID:', patientId);
         var userType = '<?= $user['user_type'] ?>';
+        var url = '<?= base_url() ?>' + userType + '/patients/appointments/' + patientId;
+        console.log('Making request to:', url);
         
-        // Set form action first
-        document.getElementById('updatePatientForm').action = '<?= base_url() ?>' + userType + '/patients/update/' + patientId;
-        console.log('Form action set to:', document.getElementById('updatePatientForm').action);
-        
-        fetch('<?= base_url() ?>' + userType + '/patients/get/' + patientId)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Patient data received:', data);
-                if (data.error) {
-                    console.error('Error loading patient data:', data.error);
-                    return;
+        fetch(url)
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status);
                 }
+                return response.text(); // Get as text first to see what we're getting
+            })
+            .then(text => {
+                console.log('Raw response text:', text);
                 
-                // Fill the form fields
-                document.getElementById('update-patient-id').value = data.id;
-                document.getElementById('update-patient-name').value = data.name || '';
-                document.getElementById('update-patient-email').value = data.email || '';
-                document.getElementById('update-patient-phone').value = data.phone || '';
-                document.getElementById('update-patient-address').value = data.address || '';
-                document.getElementById('update-patient-gender').value = data.gender || '';
-                document.getElementById('update-patient-date-of-birth').value = data.date_of_birth || '';
-                document.getElementById('update-patient-age').value = data.age || '';
-                document.getElementById('update-patient-occupation').value = data.occupation || '';
-                document.getElementById('update-patient-nationality').value = data.nationality || '';
-                
-                console.log('Form fields populated');
+                // Try to parse as JSON
+                try {
+                    var data = JSON.parse(text);
+                    console.log('Parsed JSON data:', data);
+                    
+                    if (data.error) {
+                        console.error('Error loading appointments:', data.error);
+                        displayNoAppointments();
+                        return;
+                    }
+                    
+                    // Check if appointments array exists and is valid
+                    if (data.appointments && Array.isArray(data.appointments)) {
+                        console.log('Appointments array length:', data.appointments.length);
+                        console.log('Appointments data:', data.appointments);
+                        
+                        // Update appointment count
+                        var countEl = document.getElementById('appointment-count');
+                        if (countEl) {
+                            countEl.textContent = data.appointments.length;
+                        }
+                        
+                        // Display appointments
+                        displayAppointments(data.appointments);
+                    } else {
+                        console.warn('Invalid appointments data structure:', data);
+                        displayNoAppointments();
+                    }
+                    
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    console.error('Raw text that failed to parse:', text);
+                    displayNoAppointments();
+                }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Fetch error:', error);
+                displayNoAppointments();
             });
     }
-    
-    // Handle update form submission
-    document.getElementById('updatePatientForm').addEventListener('submit', function(e) {
-        console.log('Form submitted!');
-        console.log('Form action:', this.action);
-        console.log('Form method:', this.method);
+
+    // Function to display appointments
+    function displayAppointments(appointments) {
+        console.log('Displaying appointments:', appointments);
         
-        // Log all form fields
-        var formData = new FormData(this);
-        for (var pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
+        const appointmentsList = document.getElementById('appointments-list');
+        
+        if (!appointmentsList) {
+            console.error('appointments-list element not found');
+            return;
         }
         
-        // Let the form submit normally - no need to prevent default
-        // The form will post to the correct URL and handle the redirect
-    });
-    
-    // Update Patient Panel (pen in view panel)
-    var showUpdateBtnPen = document.querySelector('.showUpdatePatientPanelBtn');
-    if (showUpdateBtnPen) {
-        showUpdateBtnPen.addEventListener('click', function(e) {
-            e.preventDefault();
-            var updatePanel = document.getElementById('updatePatientPanel');
-            if (updatePanel) updatePanel.classList.add('active');
+        if (appointments.length === 0) {
+            appointmentsList.innerHTML = '<div style="text-align:center; color:#b0b0c0; padding:20px;">No appointments found</div>';
+            return;
+        }
+        
+        let html = '';
+        appointments.forEach(appointment => {
+            console.log('Processing appointment:', appointment);
             
-            // Get patient data from view panel
-            var patientName = document.getElementById('view-patient-name').textContent;
-            var patientEmail = document.getElementById('view-patient-email').textContent;
-            var patientPhone = document.getElementById('view-patient-phone').textContent;
-            var patientGender = document.getElementById('view-patient-gender').textContent;
-            var patientDateOfBirth = document.getElementById('view-patient-date-of-birth').textContent;
-            var patientAddress = document.getElementById('view-patient-address').textContent;
+            const statusClass = getStatusClass(appointment.status);
+            const statusText = appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1);
             
-            // Fill the form fields (we'll need to get the full data via AJAX)
-            // For now, we'll use the data from the view panel
-            document.getElementById('update-patient-name').value = patientName;
-            document.getElementById('update-patient-email').value = patientEmail;
-            document.getElementById('update-patient-phone').value = patientPhone;
-            document.getElementById('update-patient-gender').value = patientGender;
-            document.getElementById('update-patient-date-of-birth').value = patientDateOfBirth;
-            document.getElementById('update-patient-address').value = patientAddress;
+            html += `
+                <div style="border: 1px solid #f0f0f0; border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #fafafa;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-weight: 600; color: #333; font-size: 0.95rem;">
+                            📅 ${formatDate(appointment.appointment_date)}
+                        </div>
+                        <div>
+                            <span class="status-badge ${statusClass}" style="font-size: 0.85rem; padding: 4px 8px;">
+                                ${statusText}
+                            </span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; font-size: 0.9rem; color: #666;">
+                        <div><i class="fas fa-clock"></i> ${appointment.appointment_time}</div>
+                        ${appointment.branch_name ? `<div><i class="fas fa-building"></i> ${appointment.branch_name}</div>` : ''}
+                    </div>
+                    ${appointment.remarks ? `<div style="margin-top: 8px; font-size: 0.85rem; color: #888; font-style: italic;">${appointment.remarks}</div>` : ''}
+                </div>
+            `;
         });
+        
+        appointmentsList.innerHTML = html;
+        console.log('Appointments displayed successfully');
     }
 
-    // Tab switching for View Patient panel
-    var tabBtns = document.querySelectorAll('.view-patient-tab-btn');
-    var tabContents = document.querySelectorAll('.view-patient-tab-content');
-    tabBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var tab = btn.getAttribute('data-tab');
-            // Remove active from all
-            tabBtns.forEach(function(b) { b.classList.remove('active'); b.style.background = 'none'; b.style.color = '#7a7a8c'; });
-            tabContents.forEach(function(c) { c.style.display = 'none'; });
-            // Set active
-            btn.classList.add('active');
-            btn.style.background = '#fff';
-            btn.style.color = '#222';
-            var content = document.getElementById('view-patient-tab-content-' + tab);
-            if (content) content.style.display = 'flex';
-        });
-    });
+    // Function to display no appointments message
+    function displayNoAppointments() {
+        console.log('Displaying no appointments message');
+        
+        const appointmentsList = document.getElementById('appointments-list');
+        const appointmentCount = document.getElementById('appointment-count');
+        
+        if (appointmentsList) {
+            appointmentsList.innerHTML = '<div style="text-align:center; color:#b0b0c0; padding:20px;">No appointments found</div>';
+        }
+        
+        if (appointmentCount) {
+            appointmentCount.textContent = '0';
+        }
+    }
+
+    // Function to get status class for styling
+    function getStatusClass(status) {
+        switch(status) {
+            case 'scheduled': return 'status-scheduled';
+            case 'completed': return 'status-completed';
+            case 'cancelled': return 'status-cancelled';
+            case 'pending': return 'status-pending';
+            default: return 'status-default';
+        }
+    }
+
+    // Function to format date
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        };
+        return date.toLocaleDateString('en-US', options);
+    }
 });
-</script> 
+</script>
+
+<style>
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-scheduled {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-completed {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status-cancelled {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.status-pending {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.status-default {
+    background-color: #f5f5f5;
+    color: #666;
+}
+</style>
