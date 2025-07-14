@@ -1,0 +1,563 @@
+.calendar-container {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  padding: 16px;
+  transition: box-shadow 0.3s ease;
+}
+
+.slide-in-panel {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 400px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
+  min-width: 300px;
+  max-width: 80vw;
+}
+
+.slide-in-panel.active {
+  right: 0;
+}
+
+.slide-in-panel .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  z-index: 1001;
+}
+
+.slide-in-panel .close-btn:hover {
+  color: #333;
+}
+
+/* Resize Handle */
+.resize-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background: #ddd;
+  cursor: col-resize;
+  z-index: 1002;
+}
+
+.resize-handle:hover {
+  background: #999;
+}
+
+.resize-handle::before {
+  content: '⋮⋮';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  color: #666;
+  letter-spacing: -2px;
+}
+
+/* Panel-specific styles */
+#doctorAvailabilityPanel {
+  border-left: 4px solid #3b82f6;
+}
+
+#doctorAvailabilityPanel .close-btn {
+  color: #3b82f6;
+}
+
+#doctorAvailabilityPanel .close-btn:hover {
+  color: #1d4ed8;
+}
+
+#appointmentInfoPanel {
+  border-left: 4px solid #6366f1;
+}
+
+#appointmentInfoPanel .close-btn {
+  color: #6366f1;
+}
+
+#appointmentInfoPanel .close-btn:hover {
+  color: #4f46e5;
+}
+
+/* Edit Panel Styles */
+#editAppointmentPanel {
+  border-left: 4px solid #f59e0b;
+}
+
+#editAppointmentPanel .close-btn {
+  color: #f59e0b;
+}
+
+#editAppointmentPanel .close-btn:hover {
+  color: #d97706;
+}
+
+#editAppointmentPanel h2 {
+  color: #f59e0b !important;
+}
+
+/* Form Controls */
+.form-control-lg {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-control-lg:focus {
+  outline: none;
+  border-color: #8b5cf6;
+}
+
+#doctorAvailabilityPanel .form-control-lg:focus {
+  border-color: #3b82f6;
+}
+
+#appointmentInfoPanel .form-control-lg:focus {
+  border-color: #6366f1;
+}
+
+/* Calendar Styles */
+.calendar-container {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.calendar-day {
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.calendar-day:hover {
+  transform: translateY(-2px);
+}
+
+/* Appointment count hover effect */
+.calendar-day .text-green-600:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Availability Status Indicators */
+.calendar-day.available {
+  border-color: #3b82f6;
+  background-color: #dbeafe;
+}
+
+.calendar-day.unavailable {
+  border-color: #ef4444;
+  background-color: #fee2e2;
+}
+
+/* Status badges */
+.status-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.status-available {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-unavailable {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Appointment card styles */
+.appointment-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: white;
+  transition: box-shadow 0.2s;
+}
+
+.appointment-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Action buttons - Updated to smaller, modern style with lavender color */
+.action-btn {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  user-select: none;
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.25);
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(168, 85, 247, 0.15);
+}
+
+.action-btn.edit {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+.action-btn.edit:hover {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+.action-btn.delete {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+.action-btn.delete:hover {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+/* Modern button styles for action buttons in header - All lavender */
+#viewAppointmentsBtn, #viewTodayBtn, #viewUpcomingBtn {
+  padding: 8px 16px;
+  border-radius: 55px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+#viewAppointmentsBtn:hover, #viewTodayBtn:hover, #viewUpcomingBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+#viewAppointmentsBtn:active, #viewTodayBtn:active, #viewUpcomingBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);
+}
+
+/* Remove individual button colors - now all use lavender */
+#viewAppointmentsBtn {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+#viewAppointmentsBtn:hover {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+#viewTodayBtn {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+#viewTodayBtn:hover {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+#viewUpcomingBtn {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+#viewUpcomingBtn:hover {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+/* Form submit buttons - Modern style with lavender */
+button[type="submit"] {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);
+}
+
+/* Admin panel submit button - Lavender */
+#addAppointmentPanel button[type="submit"] {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+#addAppointmentPanel button[type="submit"]:hover:not(:disabled) {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+/* Doctor panel submit button - Lavender */
+#doctorAvailabilityPanel button[type="submit"] {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+#doctorAvailabilityPanel button[type="submit"]:hover:not(:disabled) {
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+}
+
+/* Navigation buttons - Modern style with lavender */
+.bg-purple-100 {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%) !important;
+  color: #7c3aed !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  border: 1px solid #e9d5ff !important;
+}
+
+.bg-purple-100:hover {
+  background: linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15) !important;
+}
+
+/* Close button - Modern style with lavender accent */
+.close-btn {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+  background: rgba(168, 85, 247, 0.1) !important;
+  color: #a855f7 !important;
+  border: none !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.close-btn:hover {
+  background: rgba(168, 85, 247, 0.2) !important;
+  color: #7c3aed !important;
+  transform: scale(1.05) !important;
+}
+
+/* Dropdown buttons - Modern style with lavender */
+#monthDropdown, #yearDropdown {
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  border: 1px solid #d1d5db !important;
+  background: white !important;
+  color: #7c3aed !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#monthDropdown:hover, #yearDropdown:hover {
+  border-color: #a855f7 !important;
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1) !important;
+}
+
+#monthDropdown:focus, #yearDropdown:focus {
+  outline: none !important;
+  border-color: #a855f7 !important;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .action-btn {
+    padding: 3px 6px;
+    font-size: 0.7rem;
+  }
+  
+  #viewAppointmentsBtn, #viewTodayBtn, #viewUpcomingBtn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  button[type="submit"] {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Add subtle animations with lavender focus */
+@keyframes buttonPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.action-btn:focus {
+  animation: buttonPulse 0.3s ease;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+}
+
+/* Original values display */
+#originalValues {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+#originalValues .grid {
+  display: grid;
+  gap: 8px;
+}
+
+#originalValues strong {
+  color: #374151;
+}
+
+/* Enhanced notification styles */
+.notification {
+  animation: slideInRight 0.3s ease;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Loading state for edit form */
+#editAppointmentForm.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+#editAppointmentForm.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid #f59e0b;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Add blur effect to background when panels are open */
+.panel-blur {
+    filter: blur(2px);
+    pointer-events: none;
+    transition: filter 0.3s ease;
+}
+
+/* Enhanced panel overlay */
+.panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(1px);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.panel-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Ensure panels are above the overlay */
+.slide-in-panel {
+    z-index: 999;
+}
+
+/* Add smooth transitions for blur effect */
+.main-content {
+    transition: filter 0.3s ease;
+}

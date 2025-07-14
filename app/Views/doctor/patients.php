@@ -5,7 +5,7 @@
         <div id="content">
             <div style="background:#F5ECFE; min-height: 100vh; width: 100%;">
                 <div class="container">
-                    <?= view('templates/appointmentTable', ['appointments' => $appointments, 'user' => $user]) ?>
+                    <?= view('templates/patientsTable', ['patients' => $patients, 'user' => $user]) ?>
                 </div>
             </div>
         </div>
@@ -17,4 +17,6 @@
     .btn-primary { background: #c7aefc !important; border: none !important; }
     .btn-primary:hover { background: #a47be5 !important; }
 </style>
-<?= view('templates/footer') ?>
+
+
+<?= view('templates/footer') ?> 
