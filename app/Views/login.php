@@ -138,5 +138,5 @@
         <!-- Image goes here later -->
     </div>
 </div>
-<!-- A different comment -->
+
 <?= view('templates/footer') ?>
