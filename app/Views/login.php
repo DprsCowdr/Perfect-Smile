@@ -138,5 +138,5 @@
         <!-- Image goes here later -->
     </div>
 </div>
-
+<!-- SAMPLE CHANGE -->
 <?= view('templates/footer') ?>
