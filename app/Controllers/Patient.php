@@ -14,7 +14,7 @@ class Patient extends BaseController
         }
 
         $user = Auth::getCurrentUser();
-        
+        // SAMPLE CHANGE
         // Check if user is patient
         if ($user['user_type'] !== 'patient') {
             return redirect()->to('/dashboard');
