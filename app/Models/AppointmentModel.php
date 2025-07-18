@@ -13,57 +13,55 @@ class AppointmentModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
-        'branch_id', 'user_id', 'appointment_date', 'appointment_time', 
-        'status', 'remarks', 'created_at', 'updated_at'
+        'user_id', 
+        'branch_id', 
+        'appointment_date', 
+        'appointment_time', 
+        'status', 
+        'remarks'
     ];
 
-    // Dates
-    protected $useTimestamps = true;
+    // Dates - DISABLE TIMESTAMPS
+    protected $useTimestamps = false;
     protected $dateFormat = 'datetime';
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
     // Validation
     protected $validationRules = [
-        'branch_id' => 'required|numeric',
-        'user_id' => 'required|numeric',
+        'user_id' => 'required|integer',
         'appointment_date' => 'required|valid_date',
         'appointment_time' => 'required',
-        'status' => 'required|in_list[pending,confirmed,cancelled,completed]'
+        'status' => 'permit_empty|in_list[scheduled,rescheduled,confirmed,completed,cancelled]',
     ];
 
     protected $validationMessages = [
-        'branch_id' => [
-            'required' => 'Branch is required',
-            'numeric' => 'Invalid branch selection'
-        ],
         'user_id' => [
-            'required' => 'User is required',
-            'numeric' => 'Invalid user'
+            'required' => 'Patient is required',
+            'integer' => 'Invalid patient ID'
         ],
         'appointment_date' => [
             'required' => 'Appointment date is required',
-            'valid_date' => 'Please enter a valid date'
+            'valid_date' => 'Invalid date format'
         ],
         'appointment_time' => [
             'required' => 'Appointment time is required'
-        ],
-        'status' => [
-            'required' => 'Status is required',
-            'in_list' => 'Invalid status'
         ]
     ];
 
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    /**
-     * Get appointments by user
-     */
-    public function getAppointmentsByUser($userId)
-    {
-        return $this->where('user_id', $userId)->findAll();
-    }
+    // Callbacks
+    protected $allowCallbacks = true;
+    protected $beforeInsert = [];
+    protected $afterInsert = [];
+    protected $beforeUpdate = [];
+    protected $afterUpdate = [];
+    protected $beforeFind = [];
+    protected $afterFind = [];
+    protected $beforeDelete = [];
+    protected $afterDelete = [];
 
     /**
      * Get appointments by branch
@@ -88,7 +86,29 @@ class AppointmentModel extends Model
     {
         return $this->select('appointments.*, user.name as patient_name, user.email as patient_email, branches.name as branch_name')
                     ->join('user', 'user.id = appointments.user_id')
-                    ->join('branches', 'branches.id = appointments.branch_id')
+                    ->join('branches', 'branches.id = appointments.branch_id', 'left')
+                    ->orderBy('appointments.appointment_date', 'DESC')
+                    ->orderBy('appointments.appointment_time', 'DESC')
                     ->findAll();
     }
-} 
+
+    /**
+     * Get patient appointments
+     */
+    public function getPatientAppointments($patientId)
+    {
+        log_message('info', 'Getting appointments for patient ID: ' . $patientId);
+        
+        $result = $this->select('appointments.*, branches.name as branch_name')
+                    ->join('branches', 'branches.id = appointments.branch_id', 'left')
+                    ->where('appointments.user_id', $patientId)
+                    ->orderBy('appointments.appointment_date', 'DESC')
+                    ->orderBy('appointments.appointment_time', 'DESC')
+                    ->findAll();
+        
+        log_message('info', 'Found ' . count($result) . ' appointments for patient ' . $patientId);
+        log_message('info', 'Appointments data: ' . json_encode($result));
+        
+        return $result;
+    }
+}

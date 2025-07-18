@@ -33,6 +33,10 @@ $routes->group('admin', ['filter' => 'auth'], function($routes) {
     $routes->get('patients/get/(:num)', 'Admin::getPatient/$1');
     $routes->post('patients/update/(:num)', 'Admin::updatePatient/$1');
     $routes->get('appointments', 'Admin::appointments');
+    $routes->post('appointments/create', 'Admin::createAppointment');
+    $routes->put('appointments/update/(:num)', 'Admin::updateAppointment/$1');
+    $routes->post('appointments/update/(:num)', 'Admin::updateAppointment/$1');
+    $routes->delete('appointments/delete/(:num)', 'Admin::deleteAppointment/$1');
     $routes->get('services', 'Admin::services');
     $routes->get('waitlist', 'Admin::waitlist');
     $routes->get('procedures', 'Admin::procedures');
@@ -43,11 +47,24 @@ $routes->group('admin', ['filter' => 'auth'], function($routes) {
     $routes->get('settings', 'Admin::settings');
     $routes->get('patients/create-account/(:num)', 'Admin::createAccount/$1');
     $routes->post('patients/save-account/(:num)', 'Admin::saveAccount/$1');
+    $routes->get('patients/appointments/(:num)', 'Admin::getPatientAppointments/$1');
 });
 
 // Doctor routes (protected)
 $routes->group('doctor', ['filter' => 'auth'], function($routes) {
     $routes->get('dashboard', 'Doctor::dashboard');
+    $routes->get('appointments', 'Doctor::appointments');
+    $routes->put('appointments/update/(:num)', 'Doctor::updateAppointment/$1');
+    $routes->post('appointments/update/(:num)', 'Doctor::updateAppointment/$1');
+    $routes->delete('appointments/delete/(:num)', 'Doctor::deleteAppointment/$1');
+    $routes->get('patients', 'Doctor::patients');
+    $routes->get('patients/appointments/(:num)', 'Doctor::getPatientAppointments/$1');
+    $routes->get('procedures', 'Admin::procedures');
+    $routes->get('records', 'Doctor::records');
+    
+    // Doctor availability routes
+    $routes->post('availability/set', 'Doctor::setAvailability');
+    $routes->delete('availability/delete/(:num)', 'Doctor::deleteAvailability/$1');
 });
 
 // Patient routes (protected)
@@ -64,4 +81,5 @@ $routes->group('staff', ['filter' => 'auth'], function($routes) {
     $routes->get('patients/toggle-status/(:num)', 'Staff::toggleStatus/$1');
     $routes->get('patients/get/(:num)', 'Staff::getPatient/$1');
     $routes->post('patients/update/(:num)', 'Staff::updatePatient/$1');
+    $routes->get('patients/appointments/(:num)', 'Staff::getPatientAppointments/$1');
 });
